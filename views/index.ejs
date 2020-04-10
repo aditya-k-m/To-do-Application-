@@ -6,8 +6,8 @@
     <% for(var i = 1; i < listItems.length; i++){  %>
     <div class="item">
       <form action="/delete" method="post">
-      <input type="checkbox" name="CheckBox" value="<%= listItems[i] %>" onChange="this.form.submit()">
-      <p><%= listItems[i] %></p>
+      <input type="checkbox" name="CheckBox" value="<%= listItems[i].name %>" onChange="this.form.submit()">
+      <p><%= listItems[i].name %></p>
       </form>
     </div>
     <% } %>

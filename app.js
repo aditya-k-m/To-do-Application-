@@ -23,6 +23,12 @@ const itemSchema = {
   name: String
 };
 const Item = mongoose.model("Item", itemSchema);
+//setting up the custom Lists collection
+const listSchema = {
+  name: String,
+  value: [itemSchema]
+};
+const List = mongoose.model("List", listSchema);
 
 //setting up the home route
 app.get("/", function(req, res) {
@@ -30,11 +36,12 @@ app.get("/", function(req, res) {
     if (err) {
       console.log("Error in reading from the DB.");
     } else {
-      let i = 0;
-      items.forEach((item, i) => {
-        itemsArray[i] = items[i].name;
-        i = i + 1;
-      });
+      // let i = 0;
+      // items.forEach((item, i) => {
+      //   itemsArray[i] = items[i].name;
+      //   i = i + 1;
+      // });
+      itemsArray = items;
       console.log("Successfully retrived the items and transferred it to the array.");
     }
   });
@@ -48,7 +55,7 @@ app.get("/", function(req, res) {
 //setting up the 'about' route
 app.get("/about", function(req, res) {
   res.render("about");
-})
+});
 
 //setting up the post request to the home route
 app.post("/", function(req, res) {
@@ -83,7 +90,42 @@ app.post("/delete", function(req, res){
     }
   });
   res.redirect("/");
-})
+});
+
+//setting up the routes for custom pages
+app.get("/:customListName", function(req, res){
+  const customListName = req.params.customListName;
+  List.findOne({name: customListName}, function(err, listFound){
+    if(!err){
+      if(!listFound){
+        //Create New List
+        const list = new List({
+          name: listFound.name,
+          value: listFound.value
+        });
+        list.save();
+        res.redirect("/"+listFound.name);
+      }
+      else{
+        res.render("index", {
+            dayName: customListName,
+            listItems: itemsArray
+        });
+      }
+    }
+    else{
+      console.log("Error retriving list data");
+    }
+  });
+  // List.find(function(err, lists){
+  //   if(err){
+  //     console.log("Error retriving the lists db.");
+  //   }
+  //   else{
+  //     itemsArray = lists;
+  //     console.log("Successfully retrived data from lists db.");
+  //   }
+  });
 
 //setting up the srever at port
 app.listen(3000, function() {
