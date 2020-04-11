@@ -11,13 +11,13 @@
       </form>
     </div>
     <% } %>
-    <form class="item styleForm" action="/" method="post">
+    <form class="item styleForm" action="<%= "/"+param %>" method="post">
       <input type="text" name="inputItem" placeholder="New Item">
       <button class="addItem" type="submit" name="ButtonPress" value="item add home">+</button>
     </form>
   </div>
   <div class="">
-    <form class="styleForm" action="/" method="post">
+    <form class="styleForm" action="<%= "/"+param %>" method="post">
       <button class="btn btn-danger" type="submit" name="ButtonPress" value="removeAll">Remove All</button>
     </form>
   </div>

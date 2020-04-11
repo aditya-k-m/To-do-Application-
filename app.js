@@ -47,6 +47,7 @@ app.get("/", function(req, res) {
   });
   console.log("Rendering page with array : "+itemsArray);
   res.render("index", {
+    param: "",
     dayName: date.getDayandDate(),
     listItems: itemsArray
   });
@@ -108,6 +109,7 @@ app.get("/:customListName", function(req, res){
       }
       else{
         res.render("index", {
+            param: customListName,
             dayName: listFound.name,
             listItems: listFound.value
         });
@@ -126,6 +128,40 @@ app.get("/:customListName", function(req, res){
   //     console.log("Successfully retrived data from lists db.");
   //   }
   });
+
+//setting up post requests for custom routes
+app.post("/:customListName", function(req, res){
+  const customListName = req.params.customListName;
+  console.log(req.body);
+  if (req.body.ButtonPress == "removeAll"){
+    console.log("Removing All Data");
+    itemsArray = [];
+    List.deleteOne({name: customListName},function(err){
+      if(err)
+      console.log("Error removing data");
+      else {
+        console.log("All data removed");
+      }
+    });
+    res.redirect("/"+customListName);
+  }
+  else{
+  const item = new Item({
+    name: req.body.inputItem
+  });
+  List.findOne({name: customListName}, function(err, foundList){
+    if(err){
+      console.log("error updating custom List");
+    }
+    else {
+      foundList.value.push(item);
+      foundList.save();
+      console.log("Successfully updated custom List, now redirecting");
+      res.redirect("/"+customListName);
+    }
+  });
+}
+});
 
 //setting up the srever at port
 app.listen(3000, function() {
