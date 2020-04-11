@@ -81,6 +81,7 @@ app.post("/", function(req, res) {
 
 //post request for deleting single item
 app.post("/delete", function(req, res){
+  if (req.body.listName == ""){
   itemsArray.splice(itemsArray.indexOf(req.body.CheckBox), 1);
   Item.deleteOne({name: req.body.CheckBox}, function(err){
     if(err){
@@ -91,6 +92,17 @@ app.post("/delete", function(req, res){
     }
   });
   res.redirect("/");
+}
+ else{
+   List.findOneAndUpdate({name: req.body.listName}, {$pull: {value: {name: req.body.CheckBox}}}, function(err, result){
+     if(!err){
+       res.redirect("/"+req.body.listName);
+     }
+     else{
+       console.log("Error Deleting single item in custom list.");
+     }
+   });
+ }
 });
 
 //setting up the routes for custom pages
