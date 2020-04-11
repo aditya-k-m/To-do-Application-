@@ -100,16 +100,16 @@ app.get("/:customListName", function(req, res){
       if(!listFound){
         //Create New List
         const list = new List({
-          name: listFound.name,
-          value: listFound.value
+          name: customListName,
+          value: []
         });
         list.save();
-        res.redirect("/"+listFound.name);
+        res.redirect("/"+customListName);
       }
       else{
         res.render("index", {
-            dayName: customListName,
-            listItems: itemsArray
+            dayName: listFound.name,
+            listItems: listFound.value
         });
       }
     }
